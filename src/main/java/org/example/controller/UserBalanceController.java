@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import org.example.dto.TransferRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.example.service.UserBalanceService;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,19 @@ public class UserBalanceController {
 
     @Autowired
     private UserBalanceService userBalanceService;
+
+    // Метод для перевода денег от одного пользователя другому
+    @PostMapping("/transfer")
+    public ResponseEntity<String> transferMoney(@RequestBody TransferRequest transferRequest) {
+        boolean success = userBalanceService.transferMoney(transferRequest.getSenderId(),
+                transferRequest.getReceiverId(), transferRequest.getAmount());
+
+        if (success) {
+            return ResponseEntity.ok("Перевод успешно выполнен");
+        } else {
+            return ResponseEntity.badRequest().body("Недостаточно средств или ошибка в данных");
+        }
+    }
 
     // Получение баланса пользователя
     @GetMapping("/{userId}")
